@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shop Stock</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    padding: 20px;
+  }
+  h2 {
+    text-align: center;
+  }
+  .box {
+    max-width: 450px;
+    margin: auto;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  select, input, button {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    background: #eee;
+    margin: 5px 0;
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+  }
+  .actions button {
+    margin-left: 5px;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>🧾 Shop Stock</h2>
+
+<div class="box">
+
+  <!-- Item -->
+  <select id="item">
+    <option value="">Select Item</option>
+    <option>Dupatta</option>
+    <option>Leggings</option>
+    <option>Pant</option>
+    <option>Plazo</option>
+    <option>Ankle Pant</option>
+  </select>
+
+  <!-- Size -->
+  <select id="size">
+    <option value="">Select Size</option>
+    <option>L</option>
+    <option>XL</option>
+    <option>XXL</option>
+  </select>
+
+  <!-- Color -->
+  <input type="text" id="color" placeholder="Enter color (e.g. Red, Black)">
+
+  <!-- Quantity -->
+  <input type="number" id="qty" placeholder="Enter pieces">
+
+  <button onclick="addItem()">➕ Add</button>
+
+  <ul id="list"></ul>
+</div>
+
+<script>
+let stock = JSON.parse(localStorage.getItem("stock")) || [];
+
+function save() {
+  localStorage.setItem("stock", JSON.stringify(stock));
+}
+
+function show() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  stock.forEach((s, i) => {
+    list.innerHTML += `
+      <li>
+        ${s.item} - ${s.size} - ${s.color} - ${s.qty} pcs
+        <span class="actions">
+          <button onclick="editItem(${i})">✏️</button>
+          <button onclick="deleteItem(${i})">❌</button>
+        </span>
+      </li>`;
+  });
+}
+
+function addItem() {
+  const item = document.getElementById("item").value;
+  const size = document.getElementById("size").value;
+  const color = document.getElementById("color").value;
+  const qty = document.getElementById("qty").value;
+
+  if (!item || !size || !color || !qty) {
+    alert("Fill all fields");
+    return;
+  }
+
+  stock.push({ item, size, color, qty });
+  save();
+  show();
+
+  document.getElementById("color").value = "";
+  document.getElementById("qty").value = "";
+}
+
+function deleteItem(i) {
+  stock.splice(i, 1);
+  save();
+  show();
+}
+
+function editItem(i) {
+  const newQty = prompt("Enter new quantity:", stock[i].qty);
+  if (newQty !== null) {
+    stock[i].qty = newQty;
+    save();
+    show();
+  }
+}
+
+show();
+</script>
+
+</body>
+</html>
